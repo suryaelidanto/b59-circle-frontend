@@ -11,11 +11,15 @@ import { Link } from 'react-router-dom';
 import brandLogo from '@/assets/logo.svg';
 import { Button } from '@/components/ui/button';
 
-export default function LoginForm(props: BoxProps) {
+export default function RegisterForm(props: BoxProps) {
   return (
     <Box display={'flex'} flexDirection={'column'} gap={'12px'} {...props}>
       <Image src={brandLogo} width={'108px'} />
-      <Text fontSize={'28px'}>Login to Circle</Text>
+      <Text fontSize={'28px'}>Create an Account to Circle</Text>
+      <Field.Root>
+        <Input placeholder="Full Name" />
+        <Field.ErrorText>This is an error text</Field.ErrorText>
+      </Field.Root>
       <Field.Root>
         <Input placeholder="Email/Username" />
         <Field.ErrorText>This is an error text</Field.ErrorText>
@@ -24,18 +28,13 @@ export default function LoginForm(props: BoxProps) {
         <Input placeholder="Password" type="password" />
         <Field.ErrorText>This is an error text</Field.ErrorText>
       </Field.Root>
-      <Box display={'flex'} justifyContent={'flex-end'}>
-        <ChakraLink asChild>
-          <Link to={'/forgot-password'}>Forgot password?</Link>
-        </ChakraLink>
-      </Box>
       <Button backgroundColor={'brand'} color={'white'}>
-        Login
+        Register
       </Button>
       <Text as="span">
-        Don't have an account yet?{' '}
+        Already have account?{' '}
         <ChakraLink asChild color={'brand'}>
-          <Link to={'/register'}>Create account</Link>
+          <Link to={'/login'}>Login</Link>
         </ChakraLink>
       </Text>
     </Box>
