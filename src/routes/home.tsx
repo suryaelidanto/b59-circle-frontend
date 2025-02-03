@@ -1,5 +1,5 @@
-import { Rating } from '@/components/ui/rating';
+import { Text } from '@chakra-ui/react';
 
 export default function HomePage() {
-  return <Rating defaultValue={4} />;
+  return <Text>HomePage</Text>;
 }
