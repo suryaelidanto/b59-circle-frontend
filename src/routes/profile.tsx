@@ -1,9 +1,9 @@
 import { Box, Text } from '@chakra-ui/react';
 
-export default function HomePage() {
+export default function ProfilePage() {
   return (
     <Box>
-      <Text>HomePage</Text>
+      <Text>ProfilePage</Text>
     </Box>
   );
 }

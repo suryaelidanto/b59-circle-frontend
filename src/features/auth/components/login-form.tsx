@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { loginSchema, LoginSchemaDTO } from '@/utils/schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import dummyUsers from '@/utils/datas/user.json';
+import dummyUsers from '@/utils/fake-datas/user.json';
 import { toaster } from '@/components/ui/toaster';
 import { useNavigate } from 'react-router-dom';
 

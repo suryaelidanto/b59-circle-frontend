@@ -1,7 +1,7 @@
 import brandLogo from '@/assets/logo.svg';
 import { Button } from '@/components/ui/button';
 import { toaster } from '@/components/ui/toaster';
-import dummyUsers from '@/utils/datas/user.json';
+import dummyUsers from '@/utils/fake-datas/user.json';
 import {
   resetPasswordSchema,
   ResetPasswordSchemaDTO,

@@ -1,9 +1,9 @@
 import { Box, Text } from '@chakra-ui/react';
 
-export default function HomePage() {
+export default function FollowsPage() {
   return (
     <Box>
-      <Text>HomePage</Text>
+      <Text>FollowsPage</Text>
     </Box>
   );
 }
