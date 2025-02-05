@@ -25,7 +25,12 @@ export default function AppLayout() {
         <LeftBar />
       </GridItem>
 
-      <GridItem colSpan={2} padding={'40px'}>
+      <GridItem
+        colSpan={2}
+        padding={'40px'}
+        borderX={'1px solid'}
+        borderColor={'outline'}
+      >
         <Outlet />
       </GridItem>
 
@@ -40,13 +45,7 @@ function LeftBar(props: BoxProps) {
   const { pathname } = useLocation();
 
   return (
-    <Box
-      height={'100vh'}
-      padding={'40px'}
-      borderRight={'1px solid'}
-      borderColor={'outline'}
-      {...props}
-    >
+    <Box height={'100vh'} padding={'40px'} {...props}>
       <Image src={brandLogo} width={'220px'} padding={'0px 16px'} />
       <Box
         marginTop={'22px'}
@@ -90,14 +89,8 @@ function RightBar(props: BoxProps) {
   } = userSession;
 
   return (
-    <Box
-      height={'100vh'}
-      borderLeft={'1px solid'}
-      borderColor={'outline'}
-      padding={'40px'}
-      {...props}
-    >
-      <Card.Root size="sm" backgroundColor={'secondary'}>
+    <Box height={'100vh'} padding={'40px'} {...props}>
+      <Card.Root size="sm" backgroundColor={'background'}>
         <Card.Header>
           <Heading size="2xl">My Profile</Heading>
         </Card.Header>

@@ -8,6 +8,9 @@ const config = defineConfig({
           value: '#04A51E',
         },
         secondary: {
+          value: '#909090',
+        },
+        background: {
           value: '#262626',
         },
         outline: {
