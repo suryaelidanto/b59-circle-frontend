@@ -19,5 +19,6 @@ export type Post = {
   likesCount: number;
   repliesCount: number;
   replies?: Reply[];
+  isLiked: boolean;
   createdAt: Date;
 };

@@ -21,12 +21,12 @@ export default function AppLayout() {
 
   return (
     <Grid templateColumns="repeat(4, 1fr)">
-      <GridItem colSpan={1}>
+      <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
         <LeftBar />
       </GridItem>
 
       <GridItem
-        colSpan={2}
+        colSpan={{ base: 4, lg: 2 }}
         padding={'40px'}
         borderX={'1px solid'}
         borderColor={'outline'}
@@ -34,7 +34,7 @@ export default function AppLayout() {
         <Outlet />
       </GridItem>
 
-      <GridItem colSpan={1}>
+      <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
         <RightBar />
       </GridItem>
     </Grid>
@@ -49,7 +49,6 @@ function LeftBar(props: BoxProps) {
       <Image src={brandLogo} width={'220px'} padding={'0px 16px'} />
       <Box
         marginTop={'22px'}
-        backgroundColor={'black'}
         display={'flex'}
         flexDirection={'column'}
         gap={'8px'}

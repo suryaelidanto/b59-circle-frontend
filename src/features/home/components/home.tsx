@@ -9,7 +9,7 @@ export default function Home() {
       <CreateThread />
       <Box display={'flex'} flexDirection={'column'} gap={'16px'}>
         {postDatas.map((postData) => (
-          <CardThread postData={postData} />
+          <CardThread postData={postData} key={postData.id} />
         ))}
       </Box>
     </Box>

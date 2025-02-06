@@ -9,7 +9,7 @@ import LoginPage from './login';
 import ProfilePage from './profile';
 import RegisterPage from './register';
 import ResetPasswordPage from './reset-password';
-import SearchPage from './search';
+import SearchUsers from './search-users';
 import ThreadDetailPage from './thread-detail';
 
 const router = createBrowserRouter([
@@ -22,7 +22,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/search',
-        element: <SearchPage />,
+        element: <SearchUsers />,
       },
       {
         path: '/follows',
