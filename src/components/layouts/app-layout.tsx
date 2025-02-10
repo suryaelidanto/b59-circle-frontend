@@ -1,6 +1,6 @@
 import brandLogo from '@/assets/logo.svg';
+import { useAuthStore } from '@/stores/auth';
 import { NAV_LINK_MENU } from '@/utils/constants/nav-link-menu';
-import { isLogin, userSession } from '@/utils/fake-datas/session';
 import {
   Box,
   BoxProps,
@@ -17,7 +17,8 @@ import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Avatar } from '../ui/avatar';
 
 export default function AppLayout() {
-  if (!isLogin) return <Navigate to={'/login'} />;
+  const username = useAuthStore((state) => state.user.username);
+  if (!username) return <Navigate to={'/login'} />;
 
   return (
     <Grid templateColumns="repeat(4, 1fr)">
@@ -78,14 +79,14 @@ function LeftBar(props: BoxProps) {
 
 function RightBar(props: BoxProps) {
   const {
+    fullName,
     avatarUrl,
     backgroundUrl,
     followersCount,
     followingsCount,
-    fullName,
     username,
     bio,
-  } = userSession;
+  } = useAuthStore((state) => state.user);
 
   return (
     <Box height={'100vh'} padding={'40px'} {...props}>
