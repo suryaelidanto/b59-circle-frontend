@@ -11,10 +11,15 @@ import RegisterPage from './register';
 import ResetPasswordPage from './reset-password';
 import SearchUsers from './search-users';
 import ThreadDetailPage from './thread-detail';
+import { AuthProvider } from '@/context/authentication/authentication';
 
 const router = createBrowserRouter([
   {
-    element: <AppLayout />,
+    element: (
+      <AuthProvider>
+        <AppLayout />
+      </AuthProvider>
+    ),
     children: [
       {
         path: '/',

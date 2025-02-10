@@ -1,4 +1,5 @@
 import brandLogo from '@/assets/logo.svg';
+import { useAuthContext } from '@/context/authentication/authentication';
 import { NAV_LINK_MENU } from '@/utils/constants/nav-link-menu';
 import { isLogin, userSession } from '@/utils/fake-datas/session';
 import {
@@ -77,15 +78,12 @@ function LeftBar(props: BoxProps) {
 }
 
 function RightBar(props: BoxProps) {
+  const { avatarUrl, backgroundUrl, followersCount, followingsCount, bio } =
+    userSession;
+
   const {
-    avatarUrl,
-    backgroundUrl,
-    followersCount,
-    followingsCount,
-    fullName,
-    username,
-    bio,
-  } = userSession;
+    state: { fullName, address, email, username },
+  } = useAuthContext()!;
 
   return (
     <Box height={'100vh'} padding={'40px'} {...props}>
@@ -107,6 +105,11 @@ function RightBar(props: BoxProps) {
                 size="full"
               />
             </Box>
+            <Text>{username}</Text>
+            <Text>{fullName}</Text>
+            <Text>{address}</Text>
+            <Text>{email}</Text>
+            <Button>UBAH</Button>
             <Button backgroundColor={'brand'} color={'white'}>
               Edit Profile
             </Button>
