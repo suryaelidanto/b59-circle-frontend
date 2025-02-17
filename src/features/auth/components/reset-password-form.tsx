@@ -57,7 +57,7 @@ export default function ResetPasswordForm(props: BoxProps) {
   return (
     <Box display={'flex'} flexDirection={'column'} gap={'12px'} {...props}>
       <Image src={brandLogo} width={'108px'} />
-      <Text fontSize={'28px'}>Forgot password</Text>
+      <Text fontSize={'28px'}>Reset password</Text>
       <form
         onSubmit={handleSubmit(onSubmit)}
         style={{

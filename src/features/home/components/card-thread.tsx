@@ -2,19 +2,19 @@ import { likeLogo, likeLogoOutline, replyLogoOutline } from '@/assets/icons';
 import { Avatar } from '@/components/ui/avatar';
 import { Box, BoxProps, Button, Image, Text } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { Post } from '../types/posts';
 import { useReducer } from 'react';
+import { Thread } from '../types/posts';
 
 interface CardThreadProps extends BoxProps {
-  postData: Post;
+  threadData: Thread;
 }
 
-export default function CardThread({ postData }: CardThreadProps) {
+export default function CardThread({ threadData }: CardThreadProps) {
   const navigate = useNavigate();
   const [, forceUpdate] = useReducer((state) => state + 1, 0);
 
   function onClickCard() {
-    navigate(`/detail/${postData.id}`);
+    navigate(`/detail/${threadData.id}`);
   }
 
   return (
@@ -26,8 +26,8 @@ export default function CardThread({ postData }: CardThreadProps) {
       padding={'16px 0px'}
     >
       <Avatar
-        name={postData.user.fullName}
-        src={postData.user.avatarUrl}
+        name={threadData.user.fullName}
+        src={threadData.user.avatarUrl}
         shape="full"
         size="full"
         width={'50px'}
@@ -36,34 +36,42 @@ export default function CardThread({ postData }: CardThreadProps) {
 
       <Box display={'flex'} flexDirection={'column'} gap={'4px'}>
         <Box display={'flex'} gap={'4px'}>
-          <Text fontWeight={'bold'}>{postData.user.fullName}</Text>
-          <Text color={'secondary'}>@{postData.user.username}</Text>
+          <Text fontWeight={'bold'}>{threadData.user.fullName}</Text>
+          <Text color={'secondary'}>@{threadData.user.username}</Text>
           <Text color={'secondary'}>•</Text>
-          <Text color={'secondary'}>{postData.createdAt.getHours()}h</Text>
+          <Text color={'secondary'}>
+            {new Date(threadData.createdAt).getHours()}h
+          </Text>
         </Box>
         <Text cursor={'pointer'} onClick={onClickCard}>
-          {postData.content}
+          {threadData.content}
         </Text>
+        <Image
+          objectFit={'contain'}
+          maxHeight={'300px'}
+          maxWidth={'300px'}
+          src={threadData.images}
+        />
         <Box display={'flex'}>
           <Button
             variant={'ghost'}
             display={'flex'}
             gap={'4px'}
             onClick={() => {
-              postData.isLiked = !postData.isLiked;
+              threadData.isLiked = !threadData.isLiked;
               forceUpdate();
             }}
           >
             <Image
-              src={postData.isLiked ? likeLogo : likeLogoOutline}
+              src={threadData.isLiked ? likeLogo : likeLogoOutline}
               width={'27px'}
             />
-            <Text>{postData.likesCount}</Text>
+            <Text>{threadData.likesCount}</Text>
           </Button>
 
           <Button variant={'ghost'} display={'flex'} gap={'4px'}>
             <Image src={replyLogoOutline} width={'27px'} />
-            <Text>{postData.repliesCount}</Text>
+            <Text>{threadData.repliesCount}</Text>
             <Text>Replies</Text>
           </Button>
         </Box>

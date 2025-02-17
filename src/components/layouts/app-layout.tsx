@@ -13,8 +13,15 @@ import {
   Image,
   Text,
 } from '@chakra-ui/react';
-import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
+import {
+  Link,
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
 import { Avatar } from '../ui/avatar';
+import { logoutLogo } from '@/assets/icons';
 
 export default function AppLayout() {
   const username = useAuthStore((state) => state.user.username);
@@ -44,6 +51,14 @@ export default function AppLayout() {
 
 function LeftBar(props: BoxProps) {
   const { pathname } = useLocation();
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  function onLogout() {
+    logout();
+    localStorage.removeItem('token');
+    navigate('/login');
+  }
 
   return (
     <Box height={'100vh'} padding={'40px'} {...props}>
@@ -72,6 +87,10 @@ function LeftBar(props: BoxProps) {
             </Link>
           </ChakraLink>
         ))}
+        <Button onClick={onLogout} variant={'ghost'}>
+          <Image src={logoutLogo} width={'27px'} />
+          <Text>Logout</Text>
+        </Button>
       </Box>
     </Box>
   );
@@ -79,13 +98,8 @@ function LeftBar(props: BoxProps) {
 
 function RightBar(props: BoxProps) {
   const {
-    fullName,
-    avatarUrl,
-    backgroundUrl,
-    followersCount,
-    followingsCount,
     username,
-    bio,
+    profile: { fullName, bio, bannerUrl, avatarUrl },
   } = useAuthStore((state) => state.user);
 
   return (
@@ -97,13 +111,16 @@ function RightBar(props: BoxProps) {
         <Card.Body>
           <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
             <Box
-              backgroundImage={`url("${backgroundUrl}")`}
+              backgroundImage={`url("${bannerUrl}")`}
               padding={'15px'}
               borderRadius={'lg'}
             >
               <Avatar
                 name={fullName}
-                src={avatarUrl}
+                src={
+                  avatarUrl ||
+                  `https://api.dicebear.com/9.x/notionists/svg?seed=${fullName}`
+                }
                 shape="full"
                 size="full"
               />
@@ -124,11 +141,11 @@ function RightBar(props: BoxProps) {
             <Text>{bio}</Text>
             <Box display={'flex'} gap={'5px'}>
               <Box display={'flex'} gap={'5px'}>
-                <Text fontWeight={'bold'}>{followingsCount}</Text>
+                <Text fontWeight={'bold'}>{200}</Text>
                 <Text>Following</Text>
               </Box>
               <Box display={'flex'} gap={'5px'}>
-                <Text fontWeight={'bold'}>{followersCount}</Text>
+                <Text fontWeight={'bold'}>{100}</Text>
                 <Text>Followers</Text>
               </Box>
             </Box>

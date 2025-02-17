@@ -12,8 +12,9 @@ export type Reply = {
   createdAt: Date;
 };
 
-export type Post = {
+export type Thread = {
   id: string;
+  images: string;
   user: UserPost;
   content: string;
   likesCount: number;
