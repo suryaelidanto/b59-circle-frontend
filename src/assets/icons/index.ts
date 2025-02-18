@@ -11,6 +11,7 @@ import likeLogo from '@/assets/icons/like.svg';
 import likeLogoOutline from '@/assets/icons/like-outline.svg';
 import replyLogoOutline from '@/assets/icons/reply-outline.svg';
 import arrowLeftLogo from '@/assets/icons/arrow-left.svg';
+import logoutLogo from '@/assets/icons/logout.svg';
 
 export {
   homeLogo,
@@ -26,4 +27,5 @@ export {
   likeLogoOutline,
   replyLogoOutline,
   arrowLeftLogo,
+  logoutLogo,
 };
