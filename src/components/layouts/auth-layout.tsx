@@ -4,6 +4,7 @@ import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { toaster } from '../ui/toaster';
+import Cookies from 'js-cookie';
 
 export default function AuthLayout() {
   const { setUser } = useAuthStore();
@@ -11,7 +12,7 @@ export default function AuthLayout() {
 
   async function checkAuth() {
     try {
-      const token = localStorage.getItem('token');
+      const token = Cookies.get('token');
       const response = await api.post(
         '/auth/check',
         {},
@@ -25,7 +26,7 @@ export default function AuthLayout() {
       setUser(response.data.data);
       setIsLoading(false);
     } catch (error) {
-      localStorage.removeItem('token');
+      Cookies.remove('token');
       if (isAxiosError(error)) {
         return toaster.create({
           title: error.response?.data.message,
@@ -42,7 +43,7 @@ export default function AuthLayout() {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('token');
     if (token) checkAuth();
   }, []);
 

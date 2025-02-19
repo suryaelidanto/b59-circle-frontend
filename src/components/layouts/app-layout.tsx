@@ -22,6 +22,7 @@ import {
 } from 'react-router-dom';
 import { Avatar } from '../ui/avatar';
 import { logoutLogo } from '@/assets/icons';
+import Cookies from 'js-cookie';
 
 export default function AppLayout() {
   const username = useAuthStore((state) => state.user.username);
@@ -56,7 +57,7 @@ function LeftBar(props: BoxProps) {
 
   function onLogout() {
     logout();
-    localStorage.removeItem('token');
+    Cookies.remove('token');
     navigate('/login');
   }
 

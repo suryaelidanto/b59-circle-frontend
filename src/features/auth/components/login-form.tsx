@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/auth';
 import { api } from '@/libs/api';
 import { isAxiosError } from 'axios';
+import Cookies from 'js-cookie';
 
 export default function LoginForm(props: BoxProps) {
   const {
@@ -36,7 +37,9 @@ export default function LoginForm(props: BoxProps) {
     try {
       const response = await api.post('/auth/login', data);
       setUser(response.data.data.user);
-      localStorage.setItem('token', response.data.data.token);
+      Cookies.set('token', response.data.data.token, {
+        expires: 1,
+      });
 
       toaster.create({
         title: response.data.message,
