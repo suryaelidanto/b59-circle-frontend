@@ -23,31 +23,67 @@ import {
 import { Avatar } from '../ui/avatar';
 import { logoutLogo } from '@/assets/icons';
 import Cookies from 'js-cookie';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/libs/api';
 
 export default function AppLayout() {
-  const username = useAuthStore((state) => state.user.username);
-  if (!username) return <Navigate to={'/login'} />;
+  const {
+    user: { username },
+    setUser,
+    logout,
+  } = useAuthStore();
 
-  return (
-    <Grid templateColumns="repeat(4, 1fr)">
-      <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
-        <LeftBar />
-      </GridItem>
+  const { isFetched } = useQuery({
+    queryKey: ['check-auth'],
+    queryFn: async () => {
+      try {
+        const token = Cookies.get('token');
+        const response = await api.post(
+          '/auth/check',
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      <GridItem
-        colSpan={{ base: 4, lg: 2 }}
-        padding={'40px'}
-        borderX={'1px solid'}
-        borderColor={'outline'}
-      >
-        <Outlet />
-      </GridItem>
+        setUser(response.data.data);
+        return response.data;
+      } catch (error) {
+        console.log(error);
+        Cookies.remove('token');
+        logout();
+      }
+    },
+  });
 
-      <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
-        <RightBar />
-      </GridItem>
-    </Grid>
-  );
+  if (isFetched) {
+    if (!username) return <Navigate to={'/login'} />;
+
+    return (
+      <Grid templateColumns="repeat(4, 1fr)">
+        <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
+          <LeftBar />
+        </GridItem>
+
+        <GridItem
+          colSpan={{ base: 4, lg: 2 }}
+          padding={'40px'}
+          borderX={'1px solid'}
+          borderColor={'outline'}
+        >
+          <Outlet />
+        </GridItem>
+
+        <GridItem colSpan={1} display={{ base: 'none', lg: 'block' }}>
+          <RightBar />
+        </GridItem>
+      </Grid>
+    );
+  }
+
+  return <></>;
 }
 
 function LeftBar(props: BoxProps) {

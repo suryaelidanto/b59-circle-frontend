@@ -1,66 +1,21 @@
+import brandLogo from '@/assets/logo.svg';
+import { Button } from '@/components/ui/button';
 import {
   Box,
+  BoxProps,
+  Link as ChakraLink,
   Field,
   Image,
   Input,
+  Spinner,
   Text,
-  Link as ChakraLink,
-  BoxProps,
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import brandLogo from '@/assets/logo.svg';
-import { Button } from '@/components/ui/button';
-import { useForm } from 'react-hook-form';
-import { loginSchema, LoginSchemaDTO } from '@/utils/schemas/auth.schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toaster } from '@/components/ui/toaster';
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '@/stores/auth';
-import { api } from '@/libs/api';
-import { isAxiosError } from 'axios';
-import Cookies from 'js-cookie';
+import { useLoginForm } from '../hooks/use-login-form';
 
 export default function LoginForm(props: BoxProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginSchemaDTO>({
-    mode: 'onChange',
-    resolver: zodResolver(loginSchema),
-  });
-
-  const { setUser } = useAuthStore();
-  const navigate = useNavigate();
-
-  async function onSubmit(data: LoginSchemaDTO) {
-    try {
-      const response = await api.post('/auth/login', data);
-      setUser(response.data.data.user);
-      Cookies.set('token', response.data.data.token, {
-        expires: 1,
-      });
-
-      toaster.create({
-        title: response.data.message,
-        type: 'success',
-      });
-
-      navigate({ pathname: '/' });
-    } catch (error) {
-      if (isAxiosError(error)) {
-        return toaster.create({
-          title: error.response?.data.message,
-          type: 'error',
-        });
-      }
-
-      toaster.create({
-        title: 'Something went wrong!',
-        type: 'error',
-      });
-    }
-  }
+  const { errors, handleSubmit, isPending, onSubmit, register } =
+    useLoginForm();
 
   return (
     <Box display={'flex'} flexDirection={'column'} gap={'12px'} {...props}>
@@ -91,8 +46,13 @@ export default function LoginForm(props: BoxProps) {
             <Link to={'/forgot-password'}>Forgot password?</Link>
           </ChakraLink>
         </Box>
-        <Button backgroundColor={'brand'} color={'white'} type="submit">
-          Login
+        <Button
+          backgroundColor={'brand'}
+          color={'white'}
+          type="submit"
+          disabled={isPending ? true : false}
+        >
+          {isPending ? <Spinner /> : 'Login'}
         </Button>
       </form>
       <Text as="span">

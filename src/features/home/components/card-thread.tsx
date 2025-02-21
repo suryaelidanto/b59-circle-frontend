@@ -1,20 +1,108 @@
 import { likeLogo, likeLogoOutline, replyLogoOutline } from '@/assets/icons';
 import { Avatar } from '@/components/ui/avatar';
+import { toaster } from '@/components/ui/toaster';
+import { api } from '@/libs/api';
+import {
+  CreateLikeSchemaDTO,
+  DeleteLikeSchemaDTO,
+} from '@/utils/schemas/like.schema';
 import { Box, BoxProps, Button, Image, Text } from '@chakra-ui/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useReducer } from 'react';
 import { Thread } from '../types/posts';
 
 interface CardThreadProps extends BoxProps {
   threadData: Thread;
 }
 
+interface LikeResponse {
+  message: string;
+  data: {
+    id: string;
+    userId: string;
+    threadId: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
 export default function CardThread({ threadData }: CardThreadProps) {
   const navigate = useNavigate();
-  const [, forceUpdate] = useReducer((state) => state + 1, 0);
+  const queryClient = useQueryClient();
 
   function onClickCard() {
     navigate(`/detail/${threadData.id}`);
+  }
+
+  const { isPending: isPendingLike, mutateAsync: mutateLike } = useMutation<
+    LikeResponse,
+    Error,
+    CreateLikeSchemaDTO
+  >({
+    mutationKey: ['like'],
+    mutationFn: async (data: CreateLikeSchemaDTO) => {
+      const response = await api.post<LikeResponse>('/likes', data);
+      return response.data;
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        return toaster.create({
+          title: error.response?.data.message,
+          type: 'error',
+        });
+      }
+
+      toaster.create({
+        title: 'Something went wrong!',
+        type: 'error',
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['threads'],
+      });
+    },
+  });
+
+  const { isPending: isPendingUnlike, mutateAsync: mutateUnlike } = useMutation<
+    LikeResponse,
+    Error,
+    DeleteLikeSchemaDTO
+  >({
+    mutationKey: ['unlike'],
+    mutationFn: async (data: DeleteLikeSchemaDTO) => {
+      const response = await api.delete<LikeResponse>(
+        `/likes/${data.threadId}`
+      );
+      return response.data;
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        return toaster.create({
+          title: error.response?.data.message,
+          type: 'error',
+        });
+      }
+
+      toaster.create({
+        title: 'Something went wrong!',
+        type: 'error',
+      });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['threads'],
+      });
+    },
+  });
+
+  async function onLike(data: CreateLikeSchemaDTO) {
+    await mutateLike(data);
+  }
+
+  async function onUnlike(data: DeleteLikeSchemaDTO) {
+    await mutateUnlike(data);
   }
 
   return (
@@ -57,10 +145,12 @@ export default function CardThread({ threadData }: CardThreadProps) {
             variant={'ghost'}
             display={'flex'}
             gap={'4px'}
-            onClick={() => {
-              threadData.isLiked = !threadData.isLiked;
-              forceUpdate();
-            }}
+            disabled={isPendingLike || isPendingUnlike}
+            onClick={() =>
+              threadData.isLiked
+                ? onUnlike({ threadId: threadData.id })
+                : onLike({ threadId: threadData.id })
+            }
           >
             <Image
               src={threadData.isLiked ? likeLogo : likeLogoOutline}
