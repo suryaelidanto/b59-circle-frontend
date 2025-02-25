@@ -1,70 +1,49 @@
-import { galleryAddLogo } from '@/assets/icons';
 import { Avatar } from '@/components/ui/avatar';
 import { toaster } from '@/components/ui/toaster';
-import { ThreadResponse } from '@/features/thread/dto/thread';
+import { ReplyResponse } from '@/features/reply/dto/reply';
 import { api } from '@/libs/api';
 import { useAuthStore } from '@/stores/auth';
 import {
-  createThreadSchema,
-  CreateThreadSchemaDTO,
-} from '@/utils/schemas/thread.schema';
-import {
-  Box,
-  Button,
-  Field,
-  Image,
-  Input,
-  Spinner,
-  Textarea,
-} from '@chakra-ui/react';
+  createReplySchema,
+  CreateReplySchemaDTO,
+} from '@/utils/schemas/reply.schema';
+import { Box, Button, Field, Spinner, Textarea } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
-import React, { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
 
-export default function CreateThread() {
+export default function CreateReply() {
+  const { threadId } = useParams();
   const {
     user: {
       profile: { fullName, avatarUrl },
     },
   } = useAuthStore();
-  const [previewURL, setPreviewURL] = useState<string | null>(null);
-  const inputFileRef = useRef<HTMLInputElement | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<CreateThreadSchemaDTO>({
+  } = useForm<CreateReplySchemaDTO>({
     mode: 'onChange',
-    resolver: zodResolver(createThreadSchema),
+    resolver: zodResolver(createReplySchema),
   });
-
-  const {
-    ref: registerImagesRef,
-    onChange: registerImagesOnChange,
-    ...restRegisterImages
-  } = register('images');
 
   const queryClient = useQueryClient();
 
-  function onClickFile() {
-    inputFileRef?.current?.click();
-  }
-
   const { isPending, mutateAsync } = useMutation<
-    ThreadResponse,
+    ReplyResponse,
     Error,
-    CreateThreadSchemaDTO
+    CreateReplySchemaDTO
   >({
-    mutationKey: ['create-thread'],
-    mutationFn: async (data: CreateThreadSchemaDTO) => {
-      const formData = new FormData();
-      formData.append('content', data.content);
-      formData.append('images', data.images[0]);
-
-      const response = await api.post<ThreadResponse>('/threads', formData);
+    mutationKey: ['create-reply'],
+    mutationFn: async (data: CreateReplySchemaDTO) => {
+      const response = await api.post<ReplyResponse>(
+        `/replies/${threadId}`,
+        data
+      );
       return response.data;
     },
     onError: (error) => {
@@ -82,7 +61,7 @@ export default function CreateThread() {
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
-        queryKey: ['threads'],
+        queryKey: [`threads/${threadId}`],
       });
 
       toaster.create({
@@ -92,18 +71,9 @@ export default function CreateThread() {
     },
   });
 
-  async function onSubmit(data: CreateThreadSchemaDTO) {
+  async function onSubmit(data: CreateReplySchemaDTO) {
     await mutateAsync(data);
     reset();
-    setPreviewURL('');
-  }
-
-  function handlePreview(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files) {
-      const file = e.target.files[0];
-      const url = URL.createObjectURL(file);
-      setPreviewURL(url);
-    }
   }
 
   return (
@@ -136,22 +106,6 @@ export default function CreateThread() {
             />
             <Field.ErrorText>{errors.content?.message}</Field.ErrorText>
           </Field.Root>
-          <Button variant={'ghost'} onClick={onClickFile}>
-            <Image src={galleryAddLogo} width={'27px'} />
-          </Button>
-          <Input
-            type={'file'}
-            hidden
-            {...restRegisterImages}
-            onChange={(e) => {
-              handlePreview(e);
-              registerImagesOnChange(e);
-            }}
-            ref={(e) => {
-              registerImagesRef(e);
-              inputFileRef.current = e;
-            }}
-          />
 
           <Button
             type="submit"
@@ -162,12 +116,6 @@ export default function CreateThread() {
             {isPending ? <Spinner /> : 'Post'}
           </Button>
         </Box>
-        <Image
-          objectFit={'contain'}
-          maxHeight={'300px'}
-          maxWidth={'300px'}
-          src={previewURL ?? ''}
-        />
       </Box>
     </form>
   );

@@ -4,6 +4,6 @@ export interface ProfileEntity {
   avatarUrl: string | null;
   bannerUrl: string | null;
   bio: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
