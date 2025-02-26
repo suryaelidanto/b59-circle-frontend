@@ -114,7 +114,10 @@ export default function CardThread(thread: Thread) {
           <Text color={'secondary'}>@{thread.user?.username}</Text>
           <Text color={'secondary'}>•</Text>
           <Text color={'secondary'}>
-            {new Date(thread.createdAt).getHours()}h
+            {new Date(
+              new Date(thread.createdAt).getMilliseconds() - Date.now()
+            ).getHours()}
+            h ago
           </Text>
         </Box>
         <Text cursor={'pointer'} onClick={onClickCard}>
